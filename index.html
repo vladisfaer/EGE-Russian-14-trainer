@@ -1,0 +1,824 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ЕГЭ Русский — Задание 14</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0a0a0a;
+      --panel: rgba(255,255,255,.06);
+      --panel2: rgba(255,255,255,.08);
+      --border: rgba(255,255,255,.12);
+      --text: #ffffff;
+      --muted: rgba(255,255,255,.7);
+      --muted2: rgba(255,255,255,.5);
+      --good: rgba(16,185,129,.22);
+      --goodText: #b8f3d6;
+      --bad: rgba(239,68,68,.22);
+      --badText: #fecaca;
+      --warn: rgba(234,179,8,.24);
+      --warnText: #fef08a;
+      --shadow: 0 24px 60px rgba(0,0,0,.32);
+      --radius: 28px;
+    }
+    * { box-sizing: border-box; }
+    *:focus { outline: none; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      background: radial-gradient(1200px 1200px at 50% -100px, rgba(255,255,255,.06), transparent 55%), var(--bg);
+      color: var(--text);
+      font: 16px/1.45 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+    button, input { font: inherit; }
+    .app {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      padding: 16px;
+    }
+    .shell {
+      width: min(920px, 100%);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .header, .panel, .footer {
+      border: 1px solid var(--border);
+      background: var(--panel);
+      backdrop-filter: blur(10px);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+    .header {
+      padding: 16px;
+    }
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: flex-start;
+    }
+    .title {
+      font-size: clamp(24px, 3vw, 34px);
+      font-weight: 900;
+      letter-spacing: -0.03em;
+    }
+    .subtitle {
+      margin-top: 4px;
+      color: var(--muted);
+    }
+    .stats {
+      text-align: right;
+      color: var(--muted);
+      flex: 0 0 auto;
+    }
+    .stats strong { display: block; color: var(--text); font-size: 28px; line-height: 1.1; }
+    .grid4 {
+      margin-top: 14px;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .statcard {
+      background: rgba(0,0,0,.22);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 18px;
+      padding: 10px 12px;
+      min-height: 64px;
+    }
+    .statcard .label { color: var(--muted2); font-size: 13px; }
+    .statcard .value { margin-top: 4px; font-size: 18px; font-weight: 700; }
+    .panel {
+      padding: 18px;
+      min-height: 340px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 12px;
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.04));
+    }
+    .cardbox {
+      min-height: 240px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 16px;
+      text-align: center;
+    }
+    .cardlabel {
+      color: var(--muted2);
+      text-transform: uppercase;
+      letter-spacing: .35em;
+      font-size: 12px;
+    }
+    .cardtext {
+      min-height: 92px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: clamp(30px, 4.2vw, 56px);
+      font-weight: 900;
+      letter-spacing: -0.04em;
+      line-height: 1.08;
+      padding: 0 8px;
+      overflow-wrap: anywhere;
+    }
+    .hint {
+      min-height: 48px;
+      color: var(--muted2);
+      text-align: center;
+    }
+    .feedback-wrap {
+      min-height: 72px;
+      width: 100%;
+    }
+    .feedback {
+      min-height: 72px;
+      width: 100%;
+      border-radius: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 16px;
+      text-align: center;
+      font-weight: 700;
+    }
+    .feedback.good { background: var(--good); color: var(--goodText); }
+    .feedback.bad { background: var(--bad); color: var(--badText); }
+    .feedback.warn { background: var(--warn); color: var(--warnText); }
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .btn {
+      border: 1px solid var(--border);
+      background: var(--panel2);
+      color: var(--text);
+      border-radius: 18px;
+      padding: 16px 14px;
+      font-weight: 800;
+      font-size: 18px;
+      cursor: pointer;
+      transition: transform .08s ease, background .18s ease, border-color .18s ease, opacity .18s ease;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      tap-highlight-color: transparent;
+    }
+    .btn:active { transform: scale(.99); }
+    .btn:hover { background: rgba(255,255,255,.12); }
+    .btn.good {
+      background: rgba(16,185,129,.22);
+      border-color: rgba(52,211,153,.55);
+      color: #d1fae5;
+    }
+    .btn.bad {
+      background: rgba(239,68,68,.22);
+      border-color: rgba(248,113,113,.55);
+      color: #fee2e2;
+    }
+    .btn.warn {
+      background: rgba(234,179,8,.24);
+      border-color: rgba(253,224,71,.6);
+      color: #fef9c3;
+    }
+    .footer {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 12px;
+      align-items: center;
+    }
+    .footer .actions { display: flex; gap: 10px; flex-wrap: wrap; }
+    .smallbtn {
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.08);
+      color: var(--text);
+      border-radius: 16px;
+      padding: 10px 14px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+    .smalltext { color: var(--muted); }
+    input[type=file] { display: none; }
+    @media (max-width: 780px) {
+      .grid4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .buttons { grid-template-columns: 1fr; }
+      .footer { flex-direction: column; align-items: stretch; }
+      .footer .actions { justify-content: stretch; }
+      .smallbtn { width: 100%; }
+      .header-top { flex-direction: column; }
+      .stats { text-align: left; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="shell">
+      <section class="header">
+        <div class="header-top">
+          <div>
+            <div id="title" class="title">Тренировка</div>
+            <div id="subtitle" class="subtitle">Первый тап раскрывает ответ. Второй — переключает карточку.</div>
+          </div>
+          <div class="stats">
+            <div>Последние 100</div>
+            <strong id="recentAccuracy">—</strong>
+          </div>
+        </div>
+        <div class="grid4">
+          <div class="statcard"><div class="label">Фаза</div><div id="phaseValue" class="value">обучение</div></div>
+          <div class="statcard"><div class="label">Множитель</div><div id="weightValue" class="value">2x</div></div>
+          <div class="statcard"><div class="label">Финальный тест</div><div id="finalTotalValue" class="value">0</div></div>
+          <div class="statcard"><div class="label">Правильно</div><div id="finalAccuracyValue" class="value">—</div></div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="cardbox">
+          <div class="cardlabel">Карточка</div>
+          <div id="cardText" class="cardtext">—</div>
+          <div id="hintText" class="hint">Первый тап раскрывает ответ. Второй — переключает карточку.</div>
+          <div class="feedback-wrap">
+            <div id="feedback" class="feedback" style="display:none;"></div>
+          </div>
+        </div>
+
+        <div class="buttons">
+          <button class="btn" data-answer="слитно">слитно</button>
+          <button class="btn" data-answer="раздельно">раздельно</button>
+          <button class="btn" data-answer="дефис">дефис</button>
+        </div>
+      </section>
+
+      <section class="footer">
+        <div class="actions">
+          <button id="saveBtn" class="smallbtn">Сохранить</button>
+          <button id="loadBtn" class="smallbtn">Загрузить</button>
+          <button id="resetBtn" class="smallbtn">Сбросить</button>
+        </div>
+        <div id="cardCount" class="smalltext">Карточек: 0</div>
+      </section>
+
+      <input id="fileInput" type="file" accept="application/json" />
+    </div>
+  </div>
+
+  <script>
+    const ANSWERS = ["слитно", "раздельно", "дефис"];
+    const STORAGE_KEY = "ege-russian-14-local-html-v1";
+
+    const START_WEIGHT = {
+      memorize: 3,
+      hard: 2,
+      rule: 2,
+    };
+
+    function C(before, solution, after, answer, tier = "hard", mask = solution) {
+      return { before, solution, after, answer, tier, mask };
+    }
+
+    const TEMPLATES = [
+      C("", "без оглядки", " бежал вперёд", "раздельно", "memorize", "без"),
+      C("", "без разбору", " хватал всё", "раздельно", "memorize", "без"),
+      C("", "без спросу", " взял", "раздельно", "memorize", "без"),
+      C("", "без толку", " объяснял", "раздельно", "memorize", "без"),
+      C("", "без умолку", " говорил", "раздельно", "memorize", "без"),
+      C("", "бок о бок", " работали", "раздельно", "memorize", "бок"),
+      C("", "вблизи", " дома", "слитно", "memorize", "в"),
+      C("", "вбок", " подался", "слитно", "memorize", "в"),
+      C("", "вброд", " перешёл", "слитно", "memorize", "в"),
+      C("", "вверх", " поднялся", "слитно", "memorize", "в"),
+      C("", "вглубь", " леса", "слитно", "memorize", "в"),
+      C("", "вдалеке", " виднелся", "слитно", "memorize", "в"),
+      C("", "вдвое", " больше", "слитно", "memorize", "в"),
+      C("", "вдвоём", " пошли", "слитно", "memorize", "в"),
+      C("", "взаперти", " сидел", "слитно", "memorize", "в"),
+      C("", "вконец", " измучился", "слитно", "memorize", "в"),
+      C("", "влево", " повернул", "слитно", "memorize", "в"),
+      C("", "вместе", " собрались", "слитно", "memorize", "в"),
+      C("", "вмиг", " исчез", "слитно", "memorize", "в"),
+      C("", "вниз", " спустился", "слитно", "memorize", "в"),
+      C("", "внизу", " шумели", "слитно", "memorize", "в"),
+      C("", "вничью", " сыграли", "слитно", "memorize", "в"),
+      C("", "внутри", " помещения", "слитно", "memorize", "в"),
+      C("", "внутрь", " вошёл", "слитно", "memorize", "в"),
+      C("", "вовремя", " пришёл", "слитно", "memorize", "во"),
+      C("", "вовсю", " старался", "слитно", "memorize", "во"),
+      C("", "воедино", " слилось", "слитно", "memorize", "во"),
+      C("", "вокруг", " тишина", "слитно", "memorize", "во"),
+      C("", "вообще", " не понимаю", "слитно", "memorize", "во"),
+      C("", "впервые", " увидел", "слитно", "memorize", "в"),
+      C("", "впереди", " опасность", "слитно", "memorize", "в"),
+      C("", "вперемешку", " лежали", "слитно", "memorize", "в"),
+      C("", "вперёд", " двинулся", "слитно", "memorize", "в"),
+      C("", "вплотную", " занялся", "слитно", "memorize", "в"),
+      C("", "вполголоса", " сказал", "слитно", "memorize", "в"),
+      C("", "вполоборота", " стоял", "слитно", "memorize", "в"),
+      C("", "вполсилы", " работал", "слитно", "memorize", "в"),
+      C("", "впоследствии", " узнал", "слитно", "memorize", "в"),
+      C("", "впотьмах", " брёл", "слитно", "memorize", "в"),
+      C("", "впрочем", " неважно", "слитно", "memorize", "в"),
+      C("", "врассыпную", " побежали", "слитно", "memorize", "в"),
+      C("", "всерьёз", " обиделся", "слитно", "memorize", "в"),
+      C("", "вслепую", " действовал", "слитно", "memorize", "в"),
+      C("", "всецело", " поддерживаю", "слитно", "memorize", "все"),
+      C("", "вскользь", " упомянул", "слитно", "memorize", "в"),
+      C("", "вскоре", " приехал", "слитно", "memorize", "в"),
+      C("", "вслед", " крикнул", "слитно", "memorize", "в"),
+      C("", "втайне", " надеялся", "слитно", "memorize", "в"),
+      C("", "втрое", " сложил", "слитно", "memorize", "в"),
+      C("", "втроём", " отправились", "слитно", "memorize", "в"),
+      C("", "вширь", " раздался", "слитно", "memorize", "в"),
+      C("", "в виде", " шутки", "раздельно", "memorize", "в"),
+      C("", "в глаза", " сказал", "раздельно", "memorize", "в"),
+      C("", "в заключение", " выступления", "раздельно", "memorize", "в"),
+      C("", "в конце концов", " согласился", "раздельно", "memorize", "в"),
+      C("", "в обнимку", " шли", "раздельно", "memorize", "в"),
+      C("", "в общем", " верно", "раздельно", "memorize", "в"),
+      C("", "во власти", " стихии", "раздельно", "memorize", "во"),
+      C("", "в одиночку", " справился", "раздельно", "memorize", "в"),
+      C("", "во избежание", " ошибок", "раздельно", "memorize", "во"),
+      C("", "в открытую", " действовал", "раздельно", "memorize", "в"),
+      C("", "в потёмках", " пробирался", "раздельно", "memorize", "в"),
+      C("", "в розницу", " продают", "раздельно", "memorize", "в"),
+      C("", "в сердцах", " крикнул", "раздельно", "memorize", "в"),
+      C("", "всё равно", " приду", "раздельно", "memorize", "всё"),
+      C("", "в ходу", " выражение", "раздельно", "memorize", "в"),
+      C("", "в упор", " смотрел", "раздельно", "memorize", "в"),
+      C("", "в целом", " правильно", "раздельно", "memorize", "в"),
+      C("", "добела", " раскалил", "слитно", "memorize", "до"),
+      C("", "доверху", " набил", "слитно", "memorize", "до"),
+      C("", "донельзя", " устал", "слитно", "memorize", "до"),
+      C("", "досуха", " вытер", "слитно", "memorize", "до"),
+      C("", "досыта", " наелся", "слитно", "memorize", "до"),
+      C("", "дочиста", " вымыл", "слитно", "memorize", "до"),
+      C("", "до сих пор", " помню", "раздельно", "memorize", "до"),
+      C("", "до завтра", " отложим", "раздельно", "memorize", "до"),
+      C("", "до конца", " досмотрел", "раздельно", "memorize", "до"),
+      C("", "замуж", " вышла", "слитно", "memorize", "за"),
+      C("", "зачастую", " опаздывает", "слитно", "memorize", "за"),
+      C("", "зачем", " спросил", "слитно", "memorize", "за"),
+      C("", "за глаза", " хватит", "раздельно", "memorize", "за"),
+      C("", "за границей", " живёт", "раздельно", "memorize", "за"),
+      C("", "за границу", " уехал", "раздельно", "memorize", "за"),
+      C("", "издавна", " известно", "слитно", "memorize", "из"),
+      C("", "издалека", " приехал", "слитно", "memorize", "из"),
+      C("", "изнутри", " открыл", "слитно", "memorize", "из"),
+      C("", "итак", " начнём", "слитно", "memorize", "и"),
+      C("", "кверху", " поднял", "слитно", "memorize", "к"),
+      C("приклеил ", "к верху", " шкафа", "раздельно", "memorize", "к"),
+      C("", "кряду", " пять раз", "слитно", "memorize", "к"),
+      C("прибавить ", "к ряду", " чисел", "раздельно", "memorize", "к"),
+      C("", "кстати", " заметил", "слитно", "memorize", "к"),
+      C("", "как раз", " вовремя", "раздельно", "memorize", "как"),
+      C("", "как только", " увижу", "раздельно", "memorize", "как"),
+      C("", "к вечеру", " похолодало", "раздельно", "memorize", "к"),
+      C("", "к утру", " проснулся", "раздельно", "memorize", "к"),
+      C("", "набок", " склонил", "слитно", "memorize", "на"),
+      C("", "навек", " запомнил", "слитно", "memorize", "на"),
+      C("", "наверху", " сидел", "слитно", "memorize", "на"),
+      C("", "навзничь", " упал", "слитно", "memorize", "на"),
+      C("", "навсегда", " уехал", "слитно", "memorize", "на"),
+      C("", "навстречу", " выбежал", "слитно", "memorize", "на"),
+      C("", "назавтра", " очнулся", "слитно", "memorize", "на"),
+      C("", "на завтра", " отложил", "раздельно", "memorize", "на"),
+      C("", "назад", " вернулся", "слитно", "memorize", "на"),
+      C("", "назло", " сделал", "слитно", "memorize", "на"),
+      C("", "назубок", " выучил", "слитно", "memorize", "на"),
+      C("", "наизусть", " знал", "слитно", "memorize", "на"),
+      C("", "накануне", " праздника", "слитно", "memorize", "на"),
+      C("", "наконец", " пришёл", "слитно", "memorize", "на"),
+      C("", "налево", " свернул", "слитно", "memorize", "на"),
+      C("", "наоборот", " понял", "слитно", "memorize", "на"),
+      C("", "наперегонки", " побежали", "слитно", "memorize", "на"),
+      C("", "наперекор", " судьбе", "слитно", "memorize", "на"),
+      C("", "наперёд", " загадывать", "слитно", "memorize", "на"),
+      C("", "напоказ", " выставлять", "слитно", "memorize", "на"),
+      C("", "наполовину", " пуст", "слитно", "memorize", "на"),
+      C("", "направо", " пойдёшь", "слитно", "memorize", "на"),
+      C("", "напротив", " стоял", "слитно", "memorize", "на"),
+      C("", "наравне", " со всеми", "слитно", "memorize", "на"),
+      C("", "нараспашку", " пальто", "слитно", "memorize", "на"),
+      C("", "насквозь", " промок", "слитно", "memorize", "на"),
+      C("", "насколько", " возможно", "слитно", "memorize", "на"),
+      C("", "насмерть", " стоял", "слитно", "memorize", "на"),
+      C("", "наспех", " собрался", "слитно", "memorize", "на"),
+      C("", "настежь", " открыл", "слитно", "memorize", "на"),
+      C("", "настолько", " устал", "слитно", "memorize", "на"),
+      C("дели ", "на столько", " частей", "раздельно", "memorize", "на"),
+      C("", "натрое", " разделил", "слитно", "memorize", "на"),
+      C("", "наугад", " выбрал", "слитно", "memorize", "на"),
+      C("", "наутёк", " пустился", "слитно", "memorize", "на"),
+      C("", "наутро", " проснулся", "слитно", "memorize", "на"),
+      C("", "на бегу", " крикнул", "раздельно", "memorize", "на"),
+      C("", "на вид", " лет сорок", "раздельно", "memorize", "на"),
+      C("", "на виду", " у всех", "раздельно", "memorize", "на"),
+      C("", "на глаз", " определил", "раздельно", "memorize", "на"),
+      C("", "на глазок", " прикинул", "раздельно", "memorize", "на"),
+      C("", "на днях", " встречались", "раздельно", "memorize", "на"),
+      C("", "на лету", " схватил", "раздельно", "memorize", "на"),
+      C("", "на миг", " остановился", "раздельно", "memorize", "на"),
+      C("", "на ощупь", " нашёл", "раздельно", "memorize", "на"),
+      C("", "на радостях", " забыл", "раздельно", "memorize", "на"),
+      C("", "на редкость", " удачный", "раздельно", "memorize", "на"),
+      C("", "на совесть", " сделано", "раздельно", "memorize", "на"),
+      C("", "на убыль", " пошла", "раздельно", "memorize", "на"),
+      C("", "на ходу", " соскочил", "раздельно", "memorize", "на"),
+      C("", "откуда", " ты?", "слитно", "memorize", "от"),
+      C("", "отсюда", " видно", "слитно", "memorize", "от"),
+      C("", "оттого", " и опоздал", "слитно", "memorize", "от"),
+      C("", "оттуда", " приехал", "слитно", "memorize", "от"),
+      C("", "отчасти", " прав", "слитно", "memorize", "от"),
+      C("отказался ", "от части", " приза", "раздельно", "memorize", "от"),
+      C("", "отчего", " грустишь?", "слитно", "memorize", "от"),
+      C("", "от чего", " оно отвалилось?", "раздельно", "memorize", "от"),
+      C("", "поближе", " подойди", "слитно", "memorize", "по"),
+      C("", "побольше", " возьми", "слитно", "memorize", "по"),
+      C("", "побыстрее", " иди", "слитно", "memorize", "по"),
+      C("", "поверху", " прошёл", "слитно", "memorize", "по"),
+      C("", "повсюду", " разбросаны", "слитно", "memorize", "по"),
+      C("", "позади", " остался", "слитно", "memorize", "по"),
+      C("", "поистине", " великий", "слитно", "memorize", "по"),
+      C("", "поменьше", " говори", "слитно", "memorize", "по"),
+      C("", "помимо", " воли", "слитно", "memorize", "по"),
+      C("", "поначалу", " робел", "слитно", "memorize", "по"),
+      C("", "поневоле", " согласился", "слитно", "memorize", "по"),
+      C("", "понемногу", " привык", "слитно", "memorize", "по"),
+      C("", "поодиночке", " входили", "слитно", "memorize", "по"),
+      C("", "поровну", " разделили", "слитно", "memorize", "по"),
+      C("", "попросту", " забыл", "слитно", "memorize", "по"),
+      C("", "поскольку", " занят", "слитно", "memorize", "по"),
+      C("", "поскорее", " возвращайся", "слитно", "memorize", "по"),
+      C("", "посреди", " комнаты", "слитно", "memorize", "по"),
+      C("", "посредине", " стоял", "слитно", "memorize", "по"),
+      C("", "потому", " и ушёл", "слитно", "memorize", "по"),
+      C("шёл ", "по тому", " мосту", "раздельно", "memorize", "по"),
+      C("", "поочерёдно", " дежурили", "слитно", "memorize", "по"),
+      C("", "сбоку", " припёка", "слитно", "memorize", "с"),
+      C("", "сверху", " капало", "слитно", "memorize", "с"),
+      C("", "сейчас", " приду", "слитно", "memorize", "сей"),
+      C("", "сзади", " подошёл", "слитно", "memorize", "с"),
+      C("", "слева", " вход", "слитно", "memorize", "с"),
+      C("", "снаружи", " холодно", "слитно", "memorize", "с"),
+      C("", "сначала", " подумай", "слитно", "memorize", "с"),
+      C("", "снизу", " дует", "слитно", "memorize", "с"),
+      C("", "снова", " забыл", "слитно", "memorize", "с"),
+      C("", "совсем", " не понял", "слитно", "memorize", "с"),
+      C("", "сразу", " ответил", "слитно", "memorize", "с"),
+      C("", "сплеча", " рубил", "слитно", "memorize", "с"),
+      C("", "справа", " дверь", "слитно", "memorize", "с"),
+      C("", "с виду", " симпатичный", "раздельно", "memorize", "с"),
+      C("", "след в след", " шли", "раздельно", "memorize", "след"),
+      C("", "со временем", " привык", "раздельно", "memorize", "со"),
+      C("", "с полуслова", " понимал", "раздельно", "memorize", "с"),
+      C("", "с разбегу", " прыгнул", "раздельно", "memorize", "с"),
+      C("", "с размаху", " ударил", "раздельно", "memorize", "с"),
+      C("", "с ходу", " включился", "раздельно", "memorize", "с"),
+      C("", "тотчас", " ответил", "слитно", "memorize", "тот"),
+      C("", "вдали", " виднелся лес", "слитно", "hard", "в"),
+      C("", "в дали", " скрытой туманом", "раздельно", "hard", "в"),
+      C("", "вдаль", " смотрел", "слитно", "hard", "в"),
+      C("", "в даль", " степей уходящую", "раздельно", "hard", "в"),
+      C("", "вначале", " испугался", "слитно", "hard", "в"),
+      C("", "в начале", " пути все волновались", "раздельно", "hard", "в"),
+      C("", "наверх", " поднялся", "слитно", "hard", "на"),
+      C("", "на верх", " повозки взобрался", "раздельно", "hard", "на"),
+      C("", "насовсем", " уехал", "слитно", "hard", "на"),
+      C("", "на совсем", " старые данные не смотри", "раздельно", "hard", "на"),
+      C("", "напрямую", " сказал", "слитно", "hard", "на"),
+      C("", "на прямую", " дорогу вышел", "раздельно", "hard", "на"),
+      C("", "заодно", " действовали", "слитно", "hard", "за"),
+      C("", "за одно", " дело взялся", "раздельно", "hard", "за"),
+      C("", "затем", " началось", "слитно", "hard", "за"),
+      C("", "за тем", " домом сад", "раздельно", "hard", "за"),
+    ];
+
+    const normalize = (value) => value.replace(/\s+/g, " ").trim();
+    const squeezeHidden = (text) => text.replace(/[\s\-–—]+/g, "");
+
+    function maskSolution(solution, mask) {
+      const idx = solution.toLowerCase().indexOf(mask.toLowerCase());
+      if (idx < 0) return `(${squeezeHidden(solution)})`;
+      const left = squeezeHidden(solution.slice(0, idx));
+      const hidden = squeezeHidden(solution.slice(idx, idx + mask.length));
+      const right = squeezeHidden(solution.slice(idx + mask.length));
+      return `${left}(${hidden})${right}`;
+    }
+
+    function renderCardText(card) {
+      return normalize(`${card.before}${maskSolution(card.solution, card.mask)}${card.after}`);
+    }
+
+    function revealCardText(card) {
+      return normalize(`${card.before}${card.solution}${card.after}`);
+    }
+
+    const clampWeight = (value) => Math.max(0, Math.round(value));
+
+    function chooseWeightedCard(cards, excludeId) {
+      const pool = excludeId === undefined ? cards : cards.filter((card) => card.id !== excludeId);
+      const usable = pool.some((card) => card.weight > 0) ? pool : cards;
+      const total = usable.reduce((sum, card) => sum + Math.max(0, card.weight), 0);
+      if (total <= 0) return usable[Math.floor(Math.random() * usable.length)]?.id ?? cards[0].id;
+      let roll = Math.random() * total;
+      for (const card of usable) {
+        roll -= Math.max(0, card.weight);
+        if (roll <= 0) return card.id;
+      }
+      return usable[usable.length - 1].id;
+    }
+
+    const allZero = (cards) => cards.every((card) => card.weight <= 0);
+    const createInitialCards = () => TEMPLATES.map((template, index) => ({ id: index + 1, weight: START_WEIGHT[template.tier], ...template }));
+    const createFreshState = () => {
+      const cards = createInitialCards();
+      return {
+        cards,
+        currentCardId: chooseWeightedCard(cards),
+        revealedChoice: null,
+        phase: "training",
+        history: [],
+        finalCorrect: 0,
+        finalTotal: 0,
+        finalAccuracy: null,
+      };
+    };
+
+    let state = createFreshState();
+    let loaded = false;
+
+    const els = {
+      title: document.getElementById("title"),
+      subtitle: document.getElementById("subtitle"),
+      recentAccuracy: document.getElementById("recentAccuracy"),
+      phaseValue: document.getElementById("phaseValue"),
+      weightValue: document.getElementById("weightValue"),
+      finalTotalValue: document.getElementById("finalTotalValue"),
+      finalAccuracyValue: document.getElementById("finalAccuracyValue"),
+      cardText: document.getElementById("cardText"),
+      hintText: document.getElementById("hintText"),
+      feedback: document.getElementById("feedback"),
+      cardCount: document.getElementById("cardCount"),
+      saveBtn: document.getElementById("saveBtn"),
+      loadBtn: document.getElementById("loadBtn"),
+      resetBtn: document.getElementById("resetBtn"),
+      fileInput: document.getElementById("fileInput"),
+      buttons: Array.from(document.querySelectorAll(".btn")),
+    };
+
+    function currentCard() {
+      return state.cards.find((card) => card.id === state.currentCardId) ?? state.cards[0];
+    }
+
+    function recentAccuracy() {
+      if (!state.history.length) return null;
+      return Math.round((state.history.filter(Boolean).length / state.history.length) * 100);
+    }
+
+    function updateUI() {
+      const card = currentCard();
+      const title = state.phase === "training" ? "Тренировка" : state.phase === "final" ? "Финальный тест" : "Победа";
+      const subtitle = state.phase === "training"
+        ? "Первый тап раскрывает ответ. Второй — переключает карточку."
+        : state.phase === "final"
+        ? "Множители больше не растут. Доведи всё до нуля."
+        : `Финальный тест: ${state.finalAccuracy ?? 0}%`;
+
+      els.title.textContent = title;
+      els.subtitle.textContent = subtitle;
+      els.recentAccuracy.textContent = recentAccuracy() === null ? "—" : `${recentAccuracy()}%`;
+      els.phaseValue.textContent = state.phase === "training" ? "обучение" : state.phase === "final" ? "финал" : "победа";
+      els.weightValue.textContent = state.phase === "victory" ? "0x" : `${Math.round(card?.weight ?? 0)}x`;
+      els.finalTotalValue.textContent = String(state.finalTotal);
+      els.finalAccuracyValue.textContent = state.finalTotal === 0 ? "—" : `${Math.round((state.finalCorrect / state.finalTotal) * 100)}%`;
+      els.cardCount.textContent = `Карточек: ${state.cards.length}`;
+      els.cardText.textContent = state.revealedChoice ? revealCardText(card) : renderCardText(card);
+      els.hintText.textContent = "Первый тап раскрывает ответ. Второй — переключает карточку.";
+
+      if (state.revealedChoice) {
+        els.feedback.style.display = "flex";
+        const correct = state.revealedChoice === card.answer;
+        els.feedback.className = `feedback ${correct ? "good" : "bad"}`;
+        els.feedback.textContent = correct ? "Верно" : `Неверно. Правильный ответ: ${card.answer}`;
+      } else {
+        els.feedback.style.display = "none";
+      }
+
+      els.buttons.forEach((btn) => {
+        const choice = btn.getAttribute("data-answer");
+        btn.className = "btn";
+        btn.disabled = false;
+        if (state.revealedChoice) {
+          const chosen = state.revealedChoice === choice;
+          const correct = card.answer === choice;
+          if (chosen && correct) btn.classList.add("good");
+          else if (chosen && !correct) btn.classList.add("bad");
+          else if (correct) btn.classList.add("warn");
+        }
+      });
+
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      } catch {}
+    }
+
+    function nextCard() {
+      state = {
+        ...state,
+        revealedChoice: null,
+        currentCardId: chooseWeightedCard(state.cards, state.currentCardId),
+      };
+      updateUI();
+    }
+
+    function handleChoice(choice) {
+      if (state.phase === "victory") {
+        restart();
+        return;
+      }
+
+      if (state.revealedChoice) {
+        nextCard();
+        return;
+      }
+
+      const card = currentCard();
+      const correct = choice === card.answer;
+      const updatedCards = state.cards.map((item) => {
+        if (item.id !== card.id) return item;
+        if (state.phase === "training") return { ...item, weight: clampWeight(item.weight + (correct ? -1 : 4)) };
+        return { ...item, weight: clampWeight(item.weight + (correct ? -1 : 4)) };
+      });
+
+      const history = [...state.history, correct].slice(-100);
+
+      if (state.phase === "training" && allZero(updatedCards)) {
+        const resetCards = updatedCards.map((item) => ({ ...item, weight: 0.5 }));
+        state = {
+          cards: resetCards,
+          currentCardId: card.id,
+          revealedChoice: choice,
+          phase: "final",
+          history,
+          finalCorrect: 0,
+          finalTotal: 0,
+          finalAccuracy: null,
+        };
+        updateUI();
+        return;
+      }
+
+      if (state.phase === "final") {
+        const finalTotal = state.finalTotal + 1;
+        const finalCorrect = state.finalCorrect + (correct ? 1 : 0);
+        if (allZero(updatedCards)) {
+          state = {
+            cards: updatedCards,
+            currentCardId: card.id,
+            revealedChoice: choice,
+            phase: "victory",
+            history,
+            finalCorrect,
+            finalTotal,
+            finalAccuracy: finalTotal ? Math.round((finalCorrect / finalTotal) * 100) : 0,
+          };
+          updateUI();
+          return;
+        }
+        state = {
+          cards: updatedCards,
+          currentCardId: card.id,
+          revealedChoice: choice,
+          phase: "final",
+          history,
+          finalCorrect,
+          finalTotal,
+          finalAccuracy: null,
+        };
+        updateUI();
+        return;
+      }
+
+      state = {
+        cards: updatedCards,
+        currentCardId: card.id,
+        revealedChoice: choice,
+        phase: "training",
+        history,
+        finalCorrect: 0,
+        finalTotal: 0,
+        finalAccuracy: null,
+      };
+      updateUI();
+    }
+
+    function restart() {
+      state = createFreshState();
+      updateUI();
+    }
+
+    function exportProgress() {
+      const blob = new Blob([JSON.stringify(state, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "ege-russian-14-progress.json";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    function loadFromFile(file) {
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          const parsed = JSON.parse(String(reader.result));
+          const fresh = createFreshState();
+          const byId = new Map(fresh.cards.map((card) => [card.id, card]));
+          const restoredCards = Array.isArray(parsed.cards)
+            ? parsed.cards
+                .map((card) => {
+                  const base = byId.get(Number(card.id));
+                  if (!base) return null;
+                  return { ...base, weight: typeof card.weight === "number" ? clampWeight(card.weight) : base.weight };
+                })
+                .filter(Boolean)
+            : fresh.cards;
+          const cards = (restoredCards.length === fresh.cards.length ? restoredCards : fresh.cards).map((card) => ({ ...card }));
+          const currentCardId = typeof parsed.currentCardId === "number" && cards.some((card) => card.id === parsed.currentCardId)
+            ? parsed.currentCardId
+            : chooseWeightedCard(cards);
+          state = {
+            cards,
+            currentCardId,
+            revealedChoice: null,
+            phase: parsed.phase === "final" || parsed.phase === "victory" ? parsed.phase : "training",
+            history: Array.isArray(parsed.history) ? parsed.history.map(Boolean).slice(-100) : [],
+            finalCorrect: typeof parsed.finalCorrect === "number" ? parsed.finalCorrect : 0,
+            finalTotal: typeof parsed.finalTotal === "number" ? parsed.finalTotal : 0,
+            finalAccuracy: typeof parsed.finalAccuracy === "number" ? parsed.finalAccuracy : null,
+          };
+          updateUI();
+        } catch {
+          alert("Файл прогресса не распознан.");
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    els.buttons.forEach((btn) => {
+      btn.addEventListener("click", () => handleChoice(btn.getAttribute("data-answer")));
+    });
+    els.saveBtn.addEventListener("click", exportProgress);
+    els.loadBtn.addEventListener("click", () => els.fileInput.click());
+    els.resetBtn.addEventListener("click", restart);
+    els.fileInput.addEventListener("change", (e) => {
+      loadFromFile(e.target.files && e.target.files[0] ? e.target.files[0] : null);
+      e.target.value = "";
+    });
+
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        const fresh = createFreshState();
+        const byId = new Map(fresh.cards.map((card) => [card.id, card]));
+        const restoredCards = Array.isArray(parsed.cards)
+          ? parsed.cards
+              .map((card) => {
+                const base = byId.get(Number(card.id));
+                if (!base) return null;
+                return { ...base, weight: typeof card.weight === "number" ? clampWeight(card.weight) : base.weight };
+              })
+              .filter(Boolean)
+          : fresh.cards;
+        const cards = (restoredCards.length === fresh.cards.length ? restoredCards : fresh.cards).map((card) => ({ ...card }));
+        const currentCardId = typeof parsed.currentCardId === "number" && cards.some((card) => card.id === parsed.currentCardId)
+          ? parsed.currentCardId
+          : chooseWeightedCard(cards);
+        state = {
+          cards,
+          currentCardId,
+          revealedChoice: null,
+          phase: parsed.phase === "final" || parsed.phase === "victory" ? parsed.phase : "training",
+          history: Array.isArray(parsed.history) ? parsed.history.map(Boolean).slice(-100) : [],
+          finalCorrect: typeof parsed.finalCorrect === "number" ? parsed.finalCorrect : 0,
+          finalTotal: typeof parsed.finalTotal === "number" ? parsed.finalTotal : 0,
+          finalAccuracy: typeof parsed.finalAccuracy === "number" ? parsed.finalAccuracy : null,
+        };
+      }
+    } catch {}
+
+    loaded = true;
+    updateUI();
+  </script>
+</body>
+</html>
